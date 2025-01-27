@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html ng-app="requisicaoPessoal">
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='Content-Type' content="text/html">
+    <title>Biblioteca - RH</title>
+    <link rel="shortcut icon" href="https://www.larcopetroleo.com.br/wp-content/themes/larco/favicon.ico" type="img/ico">
+    <link rel="stylesheet" type="text/css" href="libs/bootstrap/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="libs/jquery/jquery.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+
+</head>
+
+<body ng-controller="requisicaoPessoalCtrl">
+
+    <nav class="navbar navbar-light bg-light">
+
+        <a class="navbar-brand" href="#">
+            
+            <h3 ng-bind="nomeAplicacao" style="margin-left: 1em;">Biblioteca Larco</h3>
+        </a>
+            <img src="img/logo.png" style="margin-right: 1em;">
+    </nav>
+
+<div class="form-control">
+
+<center style="margin-top: 2em;">
+
+    <form id="formulario">
+
+        <label for="nome">TÍTULO DO LIVRO:</label>
+        <input id="titulo" class="form-control" type="text" placeholder="Digite o título do livro" required style="width: 18em;">
+
+        <label for="nome">AUTOR DO LIVRO:</label>
+        <input id="autor" class="form-control" type="text" placeholder="Digite o Autor do livro" required style="width: 18em;">
+
+        <br/>
+        <br/>
+       
+        <label for="quantidade">QUANTIDADE DE CÓPIA:</label>
+        <input id="quantidade" class="form-control" inputmode="numeric" placeholder="Digite a cópia do livro" required style="width: 18em;" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+       
+        <label for="isbn">ISBN DO LIVRO:</label>
+        <input id="isbn" class="form-control" inputmode="numeric" placeholder="Digite o ISBN do livro" required style="width: 18em;">
+
+           <br/> 
+           <br/> 
+        <button type="button" class="btn btn-primary" id="gerarUrl">Gerar QR Code</button>
+
+        
+    </form>
+    
+    <br/>
+   <!-- <p id="resultado"></p>-->
+   <canvas id="qrcode"></canvas>
+
+   <!-- Botão para baixar o QR Code -->
+   <button id="downloadQrCode">Baixar QR Code</button>
+
+</center>
+
+<div class="jumbotron" style="padding: 2rem 20rem;">
+
+</p>
+
+<div ng-show="selectedCargo">
+<center>      
+    
+<div id="customers" style="width: 70%;">
+<br/>
+<br/>
+<!-- <br/> -->
+</div>
+      
+</div>
+</center>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+</div>
+</form>
+
+<br/>
+</div>
+<div style="padding:20px; background-color: #84b756bd; height: 115px;">
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#gerarUrl').click(function () {
+            // Obter os valores dos campos
+            const isbn = $('#isbn').val();
+            const quantidade = $('#quantidade').val();
+            const titulo = $('#titulo').val();
+            const autor = $('#autor').val();
+
+            // Validar os campos
+            if (!isbn || !quantidade || !titulo || !autor) {
+                alert('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            // Criar a URL com os parâmetros
+            const baseUrl = 'https://forms.office.com/Pages/ResponsePage.aspx';
+            const params = [
+                `id=O55Q5eFw_ECHpGHmmJ3f9OM7RNqAqdRKoQ-IbzZW24hUMVdQWTA1MjAwTENDSENENEhUQzZKQTY3TS4u`,
+                `r03e70f74c715470ca1762ad7db794ce2=${encodeURIComponent(titulo)}`, // Título do livro
+                `r7c6cd79be2f74efa9886237da4dcfd47=${encodeURIComponent(autor)}`,  // Autor do livro
+                `r9008ec01de4a4b89bc578fd99b0258eb=${encodeURIComponent(quantidade)}`, // Quantidade
+                `ree4b43ba28eb4c73b0c49a098228c7a8=${encodeURIComponent(isbn)}` // ISBN do livro
+            ];
+            const url = `${baseUrl}?${params.join('&')}`;
+       
+
+            // Exibir a URL gerada
+            $('#resultado').text(`URL Gerada: ${url}`);
+            $('#resultado').wrapInner('<a href="' + url + '" target="_blank"></a>');
+
+            
+            // Selecionar o canvas e obter o contexto
+            const canvas = document.getElementById('qrcode');
+            if (!canvas) {
+                alert('Canvas para QR Code não encontrado.');
+                return;
+            }
+            const ctx = canvas.getContext('2d');
+
+            // Gerar o QR Code usando qrious.js
+            const qr = new QRious({
+                element: document.getElementById('qrcode'),
+                value: url,
+                size:300,
+                level: 'H' // Tamanho do QR Code em pixels
+            });
+
+            // Desenhar o QR Code no canvas
+            const qrImage = new Image();
+            qrImage.src = qr.toDataURL();
+            qrImage.onload = function () {
+                // Limpar o canvas antes de desenhar
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Desenhar o QR Code no canvas
+                ctx.drawImage(qrImage, 0, 0, canvas.width, canvas.height);
+
+                // Carregar e desenhar a imagem no centro do QR Code
+                const logo = new Image();
+                logo.src = 'https://www.larcopetroleo.com.br/wp-content/themes/larco/favicon.ico'; // Substitua pelo caminho da sua imagem
+                logo.onload = function () {
+                    const logoSize = 45; // Tamanho do logo
+                    const x = (canvas.width - logoSize) / 2;
+                    const y = (canvas.height - logoSize) / 2;
+                    ctx.drawImage(logo, x, y, logoSize, logoSize);
+                };
+            };
+        });
+
+            // Evento para baixar o QR Code
+            $('#downloadQrCode').click(function () {
+            const canvas = document.getElementById('qrcode');
+            if (!canvas) {
+                alert('QR Code ainda não foi gerado.');
+                return;
+            }
+
+            // Capturar a imagem do canvas em formato PNG
+            const image = canvas.toDataURL('image/png');
+            
+            // Criar um link temporário para download
+            const link = document.createElement('a');
+            link.href = image;
+            link.download = 'qrcode.png'; // Nome do arquivo
+            link.click();
+        });
+    });
+
+    
+</script>
+
+</body>
+</html>
