@@ -4,7 +4,7 @@
     <meta charset='utf-8'>
     <meta http-equiv='Content-Type' content="text/html">
     <title>Biblioteca - RH</title>
-    <link rel="shortcut icon" href="https://www.larcopetroleo.com.br/wp-content/themes/larco/favicon.ico" type="img/ico">
+    <link rel="shortcut icon" href="img/favicon.ico" type="img/ico">
     <link rel="stylesheet" type="text/css" href="libs/bootstrap/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -58,11 +58,12 @@
     </form>
     
     <br/>
-   <!-- <p id="resultado"></p>-->
-   <canvas id="qrcode"></canvas>
+    <!-- <p id="resultado"></p>-->
+    <canvas id="qrcode" style="padding-left: 10em;"></canvas>
 
-   <!-- Botão para baixar o QR Code -->
-   <button id="downloadQrCode">Baixar QR Code</button>
+    <!-- Botão para baixar o QR Code -->
+    <button type="button" class="btn btn-primary" id="downloadQrCode" style="display: none; margin-bottom: 18em;">Baixar QR Code</button>
+
 
 </center>
 
@@ -96,7 +97,7 @@
 
 <br/>
 </div>
-<div style="padding:20px; background-color: #84b756bd; height: 115px;">
+<div style="padding:20px; background-color: #84b756bd; height: 145px;">
 </div>
 
 <script>
@@ -157,9 +158,12 @@
                 // Desenhar o QR Code no canvas
                 ctx.drawImage(qrImage, 0, 0, canvas.width, canvas.height);
 
+                // Exibir o botão de download
+                $('#downloadQrCode').show(); // Torna o botão visível
+
                 // Carregar e desenhar a imagem no centro do QR Code
                 const logo = new Image();
-                logo.src = 'https://www.larcopetroleo.com.br/wp-content/themes/larco/favicon.ico'; // Substitua pelo caminho da sua imagem
+                //logo.src = './img/favicon.ico'; // URL do logo
                 logo.onload = function () {
                     const logoSize = 45; // Tamanho do logo
                     const x = (canvas.width - logoSize) / 2;
@@ -169,25 +173,65 @@
             };
         });
 
-            // Evento para baixar o QR Code
-            $('#downloadQrCode').click(function () {
-            const canvas = document.getElementById('qrcode');
-            if (!canvas) {
-                alert('QR Code ainda não foi gerado.');
-                return;
-            }
 
-            // Capturar a imagem do canvas em formato PNG
-            const image = canvas.toDataURL('image/png');
-            
-            // Criar um link temporário para download
-            const link = document.createElement('a');
-            link.href = image;
-            link.download = 'qrcode.png'; // Nome do arquivo
-            link.click();
-        });
+// Função para baixar o QR Code
+$('#downloadQrCode').click(function () {
+    const canvas = document.getElementById('qrcode');
+    if (!canvas) {
+        alert('Canvas para QR Code não encontrado.');
+        return;
+    }
+
+    // Verificar se o canvas está vazio (sem QR Code gerado)
+    const ctx = canvas.getContext('2d');
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    let isEmpty = true;
+
+    // Verificar se há pixels desenhados no canvas
+    for (let i = 0; i < imageData.length; i += 4) {
+        if (imageData[i + 3] !== 0) { // Verifica o canal alpha (transparência)
+            isEmpty = false;
+            break;
+        }
+    }
+
+    if (isEmpty) {
+        alert('Gere um QR Code antes de tentar baixar.');
+        return;
+    }
+
+    // Adicionar o logo antes de exportar
+    const logo = new Image();
+    //logo.src = 'data:image/png;base64,iVBORw0KGgoAAAANS...'; // Substitua pelo base64 gerado
+    logo.src = "data:image/png;base64,AAABAAIAEBAAAAAAIABoBAAAJgAAACAgAAAAACAAqBAAAI4EAAAoAAAAEAAAACAAAAABACAAAAAAAEAEAAAAAAAAAAAAAAAAAAAAAAAA////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wEyb/MbMm/zjTJv880yb/PdMW7zxzBt85Eyb/M1////Af///wH///8B////Af///wH///8B////Af///wEyb/MhMm/z5TJv8/8nZ/L9SX/09WiV9vNolfb1YZD1/VGF9a0paPMb////Af///wH///8B////Af///wH///8BMm/zsTJv8/82cvP30N789f////3///////////b6/vnX7P3x6/P+4////zP///8B////Af///wH///8B////ATJv8/EnaPL/wNL78////////////////5/R+/Mbkvb5D4329xeR9vlLqPjtms/7Jf///wH///8B////Af///wEyb/P1KGjy/+Xt/f3///////////P5/vcYkfb3HpT3/x6U9/8elPf/GpL2/xeQ9sv///8B////Af///wH///8BMm/zzyZn8v+/0vvz///////////m8/7zFpD29x6U9/8elPf/HpT3/x6U9/8elPf/HpT3Uf///wH///8B////ATJv83EravL/kLH48f///////////////SmZ9/celPf/HpT3/x6U9/8elPf/HpT3/x6U96f///8B////Af///wEyb/MJMm/z3VqL9ff////9//////////9ZsPj3HpT3/x6U9/8elPf/HpT3/x6U9/8elPfH////Af///wH///8B////ATJv8y05c/Pp/f3//f//////////lcz77xWQ9v8elPf/HpT3/x6U9/8elPf/HpT3tf///wH///8B////Af///wH///8BLWzyK+nv/eH//////////8bj/fMRjvb7HpT3/x6U9/8elPf/HpT3/x6U91v///8B////Af///wH///8B////Af///wH///8V/P3/l8vm/fOGxfr3FpD2/R6U9/8elPf/HpT3/x6U95P///8B////Af///wH///8B////Af///wH///8B////Af///wEBhfYXDoz2Yx+U938elPd/HpT3ex6U9zv///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////AQAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8oAAAAIAAAAEAAAAABACAAAAAAAIAQAAAAAAAAAAAAAAAAAAAAAAAA////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////ATJv8wcyb/NRMm/zhzJv87Eyb/O/Mm/zuzJv86cyb/N7Mm/zUTJv8w////8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wEyb/NnMm/z3zJv8/8yb/P/Mm/z/zJv8/8yb/P/Mm/z/zBu8/8wbfP/MW7z6TJv850yb/M1////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8BMm/zmTJv8/8yb/P/Mm/z/zNw8/8pafP/HmHy/xZc8f8VW/H5G1/y8Rtf8vUYXfL/FVrx/xVb8f8aXvKnGV3yI////wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////ATJv84Myb/P/Mm/z/zNw8/8xbvP/F1zx/ypp8vVbjPbpnbr577bM+/m80PvtvdH77bnO+/G1y/v7qML6/4Cm+P9PhPXtKWjzaf///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wEyb/MrMm/z/zJv8/8zcPP/L23z/xZb8fdqlvbr0+D88f////n////7///////////////////////////////////////////38/7/6u3+of///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////ATJv85syb/P/Mm/z/zFu8/8XXfL7gqf36f////n/////////////////////////////////////////+dvu/vGv2vzlp9f85c7r/e39////////v////w////8B////Af///wH///8B////Af///wH///8B////Af///wH///8BMm/z2TJv8/8yb/P/H2Ly/0+D9ev////5/////////////////////////////////////8Pj/e9CpfjtGpL39weJ9vEBhvbxD4328Sqa9/dpuPr/2u3+t////wP///8B////Af///wH///8B////Af///wH///8B////Af///wEyb/PtMm/z/zFv8/8cYPL/qsP56/////////////////////////////////////+43f3vAIb28wCF9v8Tj/f/GpL3/xyT9/8Xkff/Do32/wCC9v8Vj/f/mc/7jf///wH///8B////Af///wH///8B////Af///wH///8B////ATJv8/Eyb/P/MW7z/yBi8v/R3/z//////////////////////////////////f7/+Tui+fEAhfX/IZX3/x6U9/8elPf/HpT3/x6U9/8elPf/IJX3/wuL9v8Rjvb/UKz5Tf///wH///8B////Af///wH///8B////Af///wH///8BMm/z4zJv8/8xbvP/IGLy/8bX/Pv////////////////////////////////R6f3pFpD37xSQ9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/IJX3/xuS9/8JivbjB4n2Bf///wH///8B////Af///wH///8B////Af///wEyb/PDMm/z/zJv8/8dYPL/k7P54/////3//////////////////////////73g/eUMi/brGZL3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPdp////Af///wH///8B////Af///wH///8B////ATJv830yb/P/Mm/z/xpe8v9jkvXt////////////////////////////////2+7+6yKW9/ESjvf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U99UelPcD////Af///wH///8B////Af///wH///8BMm/zITJv8/0yb/P/HmHy/06D9Pv7/P/3///////////////////////////////7QaX4+weJ9v8elPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U9zH///8B////Af///wH///8B////Af///wH///8BMm/zpTJv8/8qafL/Kmnz69Df/OX///////////////////////////////1dsvnlBYj2/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3a////wH///8B////Af///wH///8B////Af///wEyb/MhMm/z/zJv8/8RWPH3tMr69////////////////////////////////ZnP++sGifb/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPeN////Af///wH///8B////Af///wH///8B////Af///wEyb/N1Mm/z/xRa8f+VtPnx////+///////////////////////////xeP9+QaI9vkelPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U95X///8B////Af///wH///8B////Af///wH///8B////Af///wEyb/OvH2Hy/16O9eX////1///////////////////////////i8f7pIJX36RaQ9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3h////wH///8B////Af///wH///8B////Af///wH///8B////ATJv8wcjZfLDQ3v0//r7//////////////////////////////////VSrfn3BYj2/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPdT////Af///wH///8B////Af///wH///8B////Af///wH///8B////ASlo8gUubfOp0N78/////////////////////////////////3G7+vEAhvb7HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT37x6U9w3///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wHJ2fuJ////////////////////////////////otL83wyM9vcbk/f/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPdx////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///9R////3f////////////////////uPyvvjCYr2+xyT9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3sf///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8L8/n/eZ3Q+82Kx/v/bLn6/yGW9/8WkPf/HpT3/x6U9/8elPf/HpT3/x6U9/8elPf/HpT3/x6U95selPcD////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8BDIv2CQCF9lUDh/alFpD35yGV9/0elPf/HpT3/x6U9/8elPf/HpT36x6U96selPdD////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" ;
+    logo.onload = function () {
+        const logoSize = 45; // Tamanho do logo
+        const x = (canvas.width - logoSize) / 2;
+        const y = (canvas.height - logoSize) / 2;
+        ctx.drawImage(logo, x, y, logoSize, logoSize);
+
+        // Obter o título do livro para usar como nome do arquivo
+        const titulo = $('#titulo').val().trim(); // Remove espaços em branco no início e no fim
+        const nomeArquivo = titulo ? titulo.replace(/[^a-zA-Z0-9]/g, '_') + "_QrCode" + '.png' : 'qrcode.png'; // Substitui caracteres inválidos por "_"
+
+        // Converter o canvas em uma imagem
+        const image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+
+        // Criar um link temporário para fazer o download
+        const link = document.createElement('a');
+        link.href = image;
+        link.download = nomeArquivo; // Nome do arquivo baseado no título do livro
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    // Garantir que a imagem seja carregada para evitar comportamento assíncrono
+    logo.onerror = function () {
+        alert('Erro ao carregar o logo. Verifique o caminho do arquivo.');
+    };
+});
     });
-
     
 </script>
 
