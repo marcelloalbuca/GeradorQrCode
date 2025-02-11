@@ -116,7 +116,7 @@
             }
 
             // Criar a URL com os parâmetros
-            const baseUrl = 'https://forms.office.com/Pages/ResponsePage.aspx';
+          /*  const baseUrl = 'https://forms.office.com/Pages/ResponsePage.aspx';
             const params = [
                 `id=O55Q5eFw_ECHpGHmmJ3f9OM7RNqAqdRKoQ-IbzZW24hUMVdQWTA1MjAwTENDSENENEhUQzZKQTY3TS4u`,
                 `r03e70f74c715470ca1762ad7db794ce2=${encodeURIComponent(titulo)}`, // Título do livro
@@ -125,6 +125,29 @@
                 `ree4b43ba28eb4c73b0c49a098228c7a8=${encodeURIComponent(isbn)}` // ISBN do livro
             ];
             const url = `${baseUrl}?${params.join('&')}`;
+            
+            */
+
+            const baseUrl = 'https://apps.powerapps.com/play/e/a7718bf9-11e6-ec1d-a081-0e6cf504a9e4/a/687e1071-a473-4666-83ad-8af7c874c948';
+
+            const fixedParams = [
+            `tenantId=e5509e3b-70e1-40fc-87a4-61e6989ddff4`,
+            `source=sharebutton`,
+            `sourcetime=${Date.now()}`
+            ];
+
+            // Parâmetros dinâmicos
+            const dynamicParams = [
+                `TituloLivro=${encodeURIComponent(titulo)}`,
+                `AutorLivro=${encodeURIComponent(autor)}`,
+                `CopiaLivro=${encodeURIComponent(quantidade)}`,
+                `ISBN=${encodeURIComponent(isbn)}`
+            ];
+
+            // Construir a URL final
+            const url = `${baseUrl}?${[...fixedParams, ...dynamicParams].join('&')}`;
+
+            console.log(url);
        
 
             // Exibir a URL gerada
